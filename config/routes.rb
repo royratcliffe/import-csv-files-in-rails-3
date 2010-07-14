@@ -1,4 +1,6 @@
 ImportCsvFilesInRails3::Application.routes.draw do |map|
+  get "csv/import"
+
   resources :places
 
   resources :people
