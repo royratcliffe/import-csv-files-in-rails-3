@@ -1,0 +1,21 @@
+<%= form_for(@import_table) do |f| %>
+  <% if @import_table.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@import_table.errors.count, "error") %> prohibited this import_table from being saved:</h2>
+
+      <ul>
+      <% @import_table.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :original_path %><br />
+    <%= f.text_field :original_path %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,23 @@
+<h1>Listing import_tables</h1>
+
+<table>
+  <tr>
+    <th>Original path</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @import_tables.each do |import_table| %>
+  <tr>
+    <td><%= import_table.original_path %></td>
+    <td><%= link_to 'Show', import_table %></td>
+    <td><%= link_to 'Edit', edit_import_table_path(import_table) %></td>
+    <td><%= link_to 'Destroy', import_table, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Import table', new_import_table_path %>

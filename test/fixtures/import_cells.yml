@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  import_table_id: 1
+  row_index: 1
+  column_index: 1
+  contents: MyString
+
+two:
+  import_table_id: 1
+  row_index: 1
+  column_index: 1
+  contents: MyString
