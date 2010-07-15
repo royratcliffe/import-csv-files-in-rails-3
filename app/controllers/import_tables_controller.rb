@@ -14,6 +14,9 @@ class ImportTablesController < ApplicationController
   # GET /import_tables/1.xml
   def show
     @import_table = ImportTable.find(params[:id])
+    @import_cells = @import_table.import_cells
+    @row_index_max = @import_cells.map { |cell| cell.row_index }.max
+    @column_index_max = @import_cells.map { |cell| cell.column_index }.max
 
     respond_to do |format|
       format.html # show.html.erb

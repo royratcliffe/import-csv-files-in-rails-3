@@ -5,6 +5,18 @@
   <%= @import_table.original_path %>
 </p>
 
+<table border="1" cellspacing="1" cellpadding="1">
+  <% 0.upto(@row_index_max) do |row_index| %>
+    <% row = @import_cells.select { |cell| cell.row_index == row_index } %>
+    <tr>
+      <% 0.upto(@column_index_max) do |column_index| %>
+        <td>
+          <%= row.select { |cell| cell.column_index == column_index }[0].contents %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
 
 <%= link_to 'Edit', edit_import_table_path(@import_table) %> |
 <%= link_to 'Back', import_tables_path %>
