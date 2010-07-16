@@ -5,18 +5,30 @@
   <%= @import_table.original_path %>
 </p>
 
-<table border="1" cellspacing="1" cellpadding="1">
-  <% 0.upto(@row_index_max) do |row_index| %>
-    <% row = @import_cells.select { |cell| cell.row_index == row_index } %>
+<% form_for :merge do |f| -%>
+  <table border="1" cellspacing="1" cellpadding="1">
     <tr>
       <% 0.upto(@column_index_max) do |column_index| %>
-        <td>
-          <%= row.select { |cell| cell.column_index == column_index }[0].contents %>
-        </td>
+        <th>
+          <%= f.select(column_index, []) %>
+        </th>
       <% end %>
     </tr>
-  <% end %>
-</table>
+    <% 0.upto(@row_index_max) do |row_index| %>
+      <% row = @import_cells.select { |cell| cell.row_index == row_index } %>
+      <tr>
+        <% 0.upto(@column_index_max) do |column_index| %>
+          <td>
+            <%= row.select { |cell| cell.column_index == column_index }[0].contents %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+  <label><%= 'Select a table for merging:' %></label>
+  <%= f.select(:table, @tables.collect { |t| [t, t] }, { :include_blank => true }, { :onchange => "mergeTableSelected();" }) %>
+  <%= f.submit "Merge", :disable_with => 'Merging...' %>
+<% end -%>
 
 <%= link_to 'Edit', edit_import_table_path(@import_table) %> |
 <%= link_to 'Back', import_tables_path %>
