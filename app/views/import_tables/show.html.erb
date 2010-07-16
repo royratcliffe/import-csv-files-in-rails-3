@@ -29,6 +29,26 @@
   <%= f.select(:table, @tables.collect { |t| [t, t] }, { :include_blank => true }, { :onchange => "mergeTableSelected();" }) %>
   <%= f.submit "Merge", :disable_with => 'Merging...' %>
 <% end -%>
+<%= javascript_tag do -%>
+  var columns = new Array();
+  <% for table in @tables -%>
+    <% for column in ActiveRecord::Base.const_get(ActiveRecord::Base.class_name(table)).columns -%>
+      columns.push(new Array('<%= table %>', '<%= column.name %>'));
+    <% end -%>
+  <% end -%>
+  function mergeTableSelected() {
+    var o = $('select#merge_table option:selected');
+    $('th select option').remove();
+    $('th select').each(function(i, select) {
+      select.options.add(new Option());
+      $.each(columns, function(j, column) {
+        if (o.text() == column[0]) {
+          select.options.add(new Option(column[1]));
+        }
+      });
+    });
+  }
+<% end -%>
 
 <%= link_to 'Edit', edit_import_table_path(@import_table) %> |
 <%= link_to 'Back', import_tables_path %>
