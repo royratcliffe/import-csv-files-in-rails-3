@@ -84,4 +84,53 @@ class ImportTablesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  def merge
+    # Uncomment the following line if you want to debug this method. However,
+    # do not forget to uncomment the gem 'ruby-debug' in Gemfile also; this
+    # assumes you have the ruby-debug gem installed too, and do the usual
+    # thing if not, i.e. sudo gem install ruby-debug. Calling "debugger"
+    # inserts a break point when the server hits this point in the
+    # application. From that point you can interrogate the Rails state, single
+    # step over or into message-sends and so forth. Very useful for debugging!
+    #
+    # debugger
+    
+    import_table = ImportTable.find(params[:id])
+    import_cells = import_table.import_cells
+    row_index_max = import_cells.map { |cell| cell.row_index }.max
+    column_index_max = import_cells.map { |cell| cell.column_index }.max
+    
+    # Pull the merge parameters from the POST request. The form sets up the
+    # column mappings and merge table choice. Then use a little bit of
+    # ActiveRecord introspection to derive the table's class name followed by
+    # the class object. We will use this latter object to instantiate the
+    # merged records.
+    merge = params[:merge]
+    merge_table = merge[:table]
+    klass = ActiveRecord::Base.const_get(ActiveRecord::Base.class_name(merge_table))
+    
+    # Determine which columns have been mapped. Ignore the rest. Intersect the
+    # requested column names with actual column names. Perhaps we should abort
+    # and display some error message if the intersection proves empty because
+    # the user did not select any columns.
+    inverted_merge = merge.invert
+    column_names = inverted_merge.keys & klass.column_names
+    
+    # Finally, create new instances, one per row. Iterate the rows, then for
+    # each row, iterate the mapped columns. Select the matching cell and
+    # update the record's corresponding column. Redirect to the merged table
+    # when done.
+    0.upto(row_index_max) do |row_index|
+      row = import_cells.select { |cell| cell.row_index == row_index }
+      instance = klass.new
+      column_names.each do |column_name|
+        column_index = inverted_merge[column_name].to_i
+        contents = row.select { |cell| cell.column_index == column_index }[0].contents
+        instance[column_name] = contents
+      end
+      instance.save
+    end
+    eval "redirect_to #{merge_table}_path"
+  end
 end
