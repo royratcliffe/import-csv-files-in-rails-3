@@ -5,7 +5,7 @@
   <%= @import_table.original_path %>
 </p>
 
-<% form_for :merge do |f| -%>
+<%= form_for :merge do |f| -%>
   <table border="1" cellspacing="1" cellpadding="1">
     <tr>
       <% 0.upto(@column_index_max) do |column_index| %>
@@ -29,6 +29,7 @@
   <%= f.select(:table, @tables.collect { |t| [t, t] }, { :include_blank => true }, { :onchange => "mergeTableSelected();" }) %>
   <%= f.submit "Merge", :disable_with => 'Merging...' %>
 <% end -%>
+
 <%= javascript_tag do -%>
   var columns = new Array();
   <% for table in @tables -%>
