@@ -1,6 +1,6 @@
 ImportCsvFilesInRails3::Application.routes.draw do |map|
   resources :import_tables
-  match 'import_tables/:id' => 'import_tables#merge'
+  post 'import_tables/:id' => 'import_tables#merge'
 
   get "csv/import"
 
