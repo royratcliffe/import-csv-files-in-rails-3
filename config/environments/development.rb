@@ -17,6 +17,6 @@ ImportCsvFilesInRails3::Application.configure do
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
   
-  # Rails 3.0.0.rc complains unless told where to send deprecation warnings
+  # Complains unless told where to send deprecation warnings
   config.active_support.deprecation = :log
 end
