@@ -8,6 +8,7 @@
     <th></th>
   </tr>
 
+<%= raw will_paginate @places %>
 <% @places.each do |place| %>
   <tr>
     <td><%= place.address %></td>

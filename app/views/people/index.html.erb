@@ -9,6 +9,7 @@
     <th></th>
   </tr>
 
+<%= raw will_paginate @people %>
 <% @people.each do |person| %>
   <tr>
     <td><%= person.first_name %></td>
