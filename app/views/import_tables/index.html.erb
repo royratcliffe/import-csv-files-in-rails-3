@@ -2,7 +2,10 @@
 
 <table>
   <tr>
-    <th>Original path</th>
+    <th>File Name</th>
+    <th>Content Type</th>
+    <th>File Size</th>
+    <th>Updated At</th>
     <th></th>
     <th></th>
     <th></th>
@@ -10,7 +13,10 @@
 
 <% @import_tables.each do |import_table| %>
   <tr>
-    <td><%= import_table.original_path %></td>
+    <td><%= import_table.csv_file_name %></td>
+    <td><%= import_table.csv_content_type %></td>
+    <td><%= import_table.csv_file_size %></td>
+    <td><%= import_table.csv_updated_at %></td>
     <td><%= link_to 'Show', import_table %></td>
     <td><%= link_to 'Edit', edit_import_table_path(import_table) %></td>
     <td><%= link_to 'Destroy', import_table, :confirm => 'Are you sure?', :method => :delete %></td>

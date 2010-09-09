@@ -1,3 +1,5 @@
+require 'will_paginate'
+
 class ImportTablesController < ApplicationController
   # GET /import_tables
   # GET /import_tables.xml
@@ -14,9 +16,8 @@ class ImportTablesController < ApplicationController
   # GET /import_tables/1.xml
   def show
     @import_table = ImportTable.find(params[:id])
-    @import_cells = @import_table.import_cells
-    @row_index_max = @import_cells.map { |cell| cell.row_index }.max
-    @column_index_max = @import_cells.map { |cell| cell.column_index }.max
+    @rows_of_cells = FasterCSV.parse(open(@import_table.csv.url).read).paginate(params)
+    @number_of_columns = @rows_of_cells.map { |row| row.length }.max
     @tables = ActiveRecord::Base.connection.tables.select { |t| t != 'schema_migrations' }
 
     respond_to do |format|
@@ -97,9 +98,8 @@ class ImportTablesController < ApplicationController
     # debugger
     
     import_table = ImportTable.find(params[:id])
-    import_cells = import_table.import_cells
-    row_index_max = import_cells.map { |cell| cell.row_index }.max
-    column_index_max = import_cells.map { |cell| cell.column_index }.max
+    rows_of_cells = FasterCSV.parse(open(import_table.csv.url).read)
+    number_of_columns = rows_of_cells.map { |row| row.length }.max
     
     # Pull the merge parameters from the POST request. The form sets up the
     # column mappings and merge table choice. Then use a little bit of
@@ -121,13 +121,11 @@ class ImportTablesController < ApplicationController
     # each row, iterate the mapped columns. Select the matching cell and
     # update the record's corresponding column. Redirect to the merged table
     # when done.
-    0.upto(row_index_max) do |row_index|
-      row = import_cells.select { |cell| cell.row_index == row_index }
+    rows_of_cells.each do |row|
       instance = klass.new
       column_names.each do |column_name|
         column_index = inverted_merge[column_name].to_i
-        contents = row.select { |cell| cell.column_index == column_index }[0].contents
-        instance[column_name] = contents
+        instance[column_name] = row[column_index]
       end
       instance.save
     end

@@ -1,25 +1,34 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Original path:</b>
-  <%= @import_table.original_path %>
+  <b>File Name:</b>
+  <%= @import_table.csv_file_name %>
+  <br/>
+  <b>Content Type:</b>
+  <%= @import_table.csv_content_type %>
+  <br/>
+  <b>File Size:</b>
+  <%= @import_table.csv_file_size %>
+  <br/>
+  <b>Updated At:</b>
+  <%= @import_table.csv_updated_at %>
 </p>
 
+<%= raw will_paginate @rows_of_cells %>
 <%= form_for :merge do |f| -%>
   <table border="1" cellspacing="1" cellpadding="1">
     <tr>
-      <% 0.upto(@column_index_max) do |column_index| %>
+      <% 0.upto(@number_of_columns - 1) do |column_index| %>
         <th>
           <%= f.select(column_index, []) %>
         </th>
       <% end %>
     </tr>
-    <% 0.upto(@row_index_max) do |row_index| %>
-      <% row = @import_cells.select { |cell| cell.row_index == row_index } %>
+    <% @rows_of_cells.each do |cells| %>
       <tr>
-        <% 0.upto(@column_index_max) do |column_index| %>
+        <% cells.each do |cell| %>
           <td>
-            <%= row.select { |cell| cell.column_index == column_index }[0].contents %>
+            <%= cell %>
           </td>
         <% end %>
       </tr>

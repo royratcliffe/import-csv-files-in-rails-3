@@ -1,21 +1,21 @@
-require 'fastercsv'
-
 class CsvController < ApplicationController
   def import
   end
 
   def upload
-    table = ImportTable.new :original_path => params[:upload][:csv].original_path
-    row_index = 0
-    FasterCSV.parse(params[:upload][:csv]) do |cells|
-      column_index = 0
-      cells.each do |cell|
-        table.import_cells.build :column_index => column_index, :row_index => row_index, :contents => cell
-        column_index += 1
-      end
-      row_index += 1
-    end
-    table.save
-    redirect_to import_table_path(table)
+    # The original implementation stored import cells as records. This is
+    # convenient but not very efficient in cases where the number of cells is
+    # very large. Performance degrades considerably for say 100,000 cells
+    # (from a table of 10,000 rows by 10 columns). Although CSV parsing is
+    # fast, as promised by FasterCSV, large volumes of table insertions gives
+    # rise to significant latency. Not good.
+    #
+    # The new uploading method stores the import table verbatim in an external
+    # store, specifically Amazon's S3. Hence the tables live outside the
+    # database. This approach relies on CSV parsing speed, because controllers
+    # parse the entire CSV at every page view. The file is sequential, with
+    # no easy way around that unless we plan to index the CSV or chop it up
+    # somehow.
+    redirect_to import_table_path(ImportTable.create(params[:upload]))
   end
 end
